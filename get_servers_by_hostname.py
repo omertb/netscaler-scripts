@@ -2,8 +2,8 @@
 """Gets and prints the services bound to a hostname
 
 This script asks for a hostname as input and prints
-the output as the bound services, IP addresses
-service types and states in a formatted way.
+the bound services, IP addresses, service types and
+states in a formatted way as output.
 
 It saves time as for searching which services
 the hostname is switched to and the states of
