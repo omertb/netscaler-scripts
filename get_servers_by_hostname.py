@@ -23,7 +23,7 @@ requests.packages.urllib3.disable_warnings()
 # read-only user credentials
 USERNAME = "USERNAME"
 PASSWORD = "PASSWORD"
-IPADDR = "IP_ADDRESS"
+IPADDR = "Netscaler IP ADDRESS"
 
 ns_session = nitro_service(IPADDR, "https")
 ns_session.certvalidation = False
