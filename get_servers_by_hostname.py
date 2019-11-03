@@ -15,15 +15,17 @@ from nssrc.com.citrix.netscaler.nitro.resource.config.cs.cspolicy import *
 from nssrc.com.citrix.netscaler.nitro.resource.config.cs.cspolicy_binding import *
 from nssrc.com.citrix.netscaler.nitro.resource.config.lb.lbvserver_binding import *
 from nssrc.com.citrix.netscaler.nitro.resource.config.cs.csvserver import *
+from nssrc.com.citrix.netscaler.nitro.resource.config.basic.service_lbmonitor_binding import *
+from nssrc.com.citrix.netscaler.nitro.resource.config.basic.servicegroup_servicegroupentitymonbindings_binding import *
 import requests
 
 # suppress certificate verification warnings
 requests.packages.urllib3.disable_warnings()
 
 # read-only user credentials
-USERNAME = "USERNAME"
-PASSWORD = "PASSWORD"
-IPADDR = "Netscaler IP ADDRESS"
+USERNAME = "NS USERNAME"
+PASSWORD = "NS PASSWORD"
+IPADDR = "NS IP ADDRESS"
 
 ns_session = nitro_service(IPADDR, "https")
 ns_session.certvalidation = False
@@ -62,22 +64,46 @@ def get_target_vserver(pol_name):
 def get_bound_services(target_virtual_server):
     lbvserver_binding_obj = lbvserver_binding()
     virtual_server = lbvserver_binding_obj.get(ns_session, name=target_virtual_server)
-    print("{:^25} {:^24} {:^24} {:^24}".format("IP Address", "Port", "Service Type", "Current State"))
-    print("{:^25} {:^24} {:^24} {:^24}".format("-" * 25, "-" * 24, "-" * 24, "-" * 24))
+    print("{:^25} {:^24} {:^24} {:^24} {:^44}".format("IP Address", "Port", "Service Type", "Current State", "Cookie"))
+    print("{:^25} {:^24} {:^24} {:^24} {:^44}".format("-" * 25, "-" * 24, "-" * 24, "-" * 24, "-" * 44))
+    i = 0
     if hasattr(virtual_server, 'lbvserver_servicegroupmember_bindings'):
         for server in virtual_server.lbvserver_servicegroupmember_bindings:
             ip_addr = server['ipv46']
             port = server['port']
             service_type = server['servicetype']
             service_state = server['curstate']
-            print("{:^25} {:^24} {:^24} {:^24}".format(ip_addr, port, service_type, service_state))
+            svc_cookie = server['cookieipport'] if server['cookieipport'] else 'COOKIE INSERT NOT ENABLED!'
+            print("{:^25} {:^24} {:^24} {:^24} {:>44}".format(ip_addr, port, service_type, service_state, svc_cookie))
+
+        svc_monitor = servicegroup_servicegroupentitymonbindings_binding.get(ns_session,
+                                                                    server['servicegroupname'])
+
+        for monitor in svc_monitor:
+            mon_state = monitor.monitor_state
+            if mon_state == 'DOWN':  # delete down control to see all monitor status
+                ip_addr = monitor.servicegroupentname2.split('?')[1]
+                mon_name = monitor.monitor_name
+                response = monitor.lastresponse
+                print(colors.fg.orange + "* Monitor named \'{}\' for {} is {} || Response: {}".format(mon_name, ip_addr,
+                                                                                              mon_state, response)
+                      + colors.reset)
+
     if hasattr(virtual_server, 'lbvserver_service_bindings'):
         for server in virtual_server.lbvserver_service_bindings:
             ip_addr = server['ipv46']
             port = server['port']
             service_type = server['servicetype']
             service_state = server['curstate']
-            print("{:^25} {:^24} {:^24} {:^24}".format(ip_addr, port, service_type, service_state))
+            svc_cookie = server['cookieipport'] if server['cookieipport'] else 'COOKIE INSERT NOT ENABLED!'
+            print("{:^25} {:^24} {:^24} {:^24} {:>44}".format(ip_addr, port, service_type, service_state, svc_cookie))
+
+            if service_state == 'DOWN':  # delete down control to see all monitor status
+                svc_monitor = service_lbmonitor_binding.get(ns_session, name=server['servicename'])
+                for monitor in svc_monitor:
+                    print(colors.fg.red + colors.bold + "{:76} {}".format("", "Down Reason: ") +
+                          colors.reset + colors.fg.orange + monitor.lastresponse + colors.reset)
+
 
 
 def get_vserver_name_ip_addr(pol_name):
@@ -120,8 +146,8 @@ def main():
                 print("_" * 100)
                 print()
                 get_bound_services(target_vs)
-                print("_" * 100)
-                print("#" * 100)
+                print("_" * 145)
+                print("#" * 145)
 
 
 if __name__ == "__main__":
