@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Gets and prints System Resource Utilization,
-HTTP and TCP Stats.
+HTTP and TCP Stats for Citrix Netscaler.
 
 """
 import requests
