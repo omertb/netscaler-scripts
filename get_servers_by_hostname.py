@@ -18,16 +18,17 @@ from nssrc.com.citrix.netscaler.nitro.resource.config.cs.csvserver import *
 from nssrc.com.citrix.netscaler.nitro.resource.config.basic.service_lbmonitor_binding import *
 from nssrc.com.citrix.netscaler.nitro.resource.config.basic.servicegroup_servicegroupentitymonbindings_binding import *
 import requests
+from credential import *
 
 # suppress certificate verification warnings
 requests.packages.urllib3.disable_warnings()
 
-# read-only user credentials
-USERNAME = "NS USERNAME"
-PASSWORD = "NS PASSWORD"
-IPADDR = "NS IP ADDRESS"
+# read-only user credentials, uncomment and fill in if credential.py file is not available
+#USERNAME = "NS USERNAME"
+#PASSWORD = "NS PASSWORD"
+#NS_IP = "NS IP ADDRESS"
 
-ns_session = nitro_service(IPADDR, "https")
+ns_session = nitro_service(NS_IP, "https")
 ns_session.certvalidation = False
 ns_session.hostnameverification = False
 ns_session.login(USERNAME, PASSWORD, 3600)

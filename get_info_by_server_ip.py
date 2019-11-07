@@ -9,15 +9,16 @@ bound content switching policies as output.
 """
 import requests
 import json
+from credential import *
 # Nitro-sdk library is not needed
 
 # suppress certificate verification warnings
 requests.packages.urllib3.disable_warnings()
 
-# read-only user credentials
-USERNAME = "USERNAME"
-PASSWORD = "PASSWORD"
-NS_IP = "Netscaler IP ADDRESS"
+# read-only user credentials, uncomment and fill in if credential.py file is not available
+# USERNAME = "USERNAME"
+# PASSWORD = "PASSWORD"
+# NS_IP = "Netscaler IP ADDRESS"
 
 
 class colors:
