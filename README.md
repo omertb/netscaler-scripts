@@ -27,3 +27,12 @@ monitor details if DOWN_
 >  Sample output for an entered domain address that is context switched:
 
 ![hostname info output](./get_servers_by_hostname.png)
+
+> Beware: Include a file named "credential.py" with content as below in the same directory
+with these scripts; or uncomment relevant lines in scripts and enter credential.
+
+```
+USERNAME = "USERNAME"
+PASSWORD = "PASSWORD"
+NS_IP = "IP ADDRESS"
+```

@@ -2,9 +2,9 @@
 """Gets and prints the virtual servers and
 content switching policies bound to a server IP address.
 
-The script takes IP address as input.
-It gives policy hit number besides
-bound content switching policies as output.
+The script accepts IP address as input;
+and prints bound content switching policies
+with hit numbers as output.
 
 """
 import requests
