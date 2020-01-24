@@ -82,8 +82,9 @@ class ServerBindings:
         url = "https://{}/nitro/v1/config/lbvserver_csvserver_binding/{}".format(self.ns_ip, vserver_name)
         response = requests.request("GET", url, headers=self.headers, verify=False)
         response_dict = json.loads(response.text)
-        return response_dict['lbvserver_csvserver_binding']  # policy-target LBV list
-        # And each list item is a dictionary with keys: cachevserver, policyname, hits
+        if 'lbvserver_csvserver_binding' in response_dict:
+            return response_dict['lbvserver_csvserver_binding']  # policy-target LBV list
+            # And each list item is a dictionary with keys: cachevserver, policyname, hits
 
     def get_cs_policy_rule_content(self, policy_name) -> str:
         url = "https://{}/nitro/v1/config/cspolicy/{}".format(self.ns_ip, policy_name)
@@ -136,12 +137,15 @@ def main():
     print("_" * 130)
     print("#" * 130)
     for vs in bound_vs_list:
+        policy_target_list = sb.get_bindings_by_vs(vs)
+        if not policy_target_list:
+            print("{}: No bound CS VServer is available!".format(vs))
+            continue
         print(colors.bold + colors.fg.orange)
         print("_" * 130)
         print("{:<65}{:>65}".format("LB Virtual Server Name: ", vs))
         print("-" * 130)
         print(colors.reset)
-        policy_target_list = sb.get_bindings_by_vs(vs)
         print("{:^30} {:^30} {:^17} {:^50}".format("CS VS Name", "Policy Name", "Policy Hits", "Policy Content"))
         print("{:^30} {:^30} {:^17} {:^50}".format("-" * 30, "-" * 30, "-" * 17, "-" * 50))
         for policy_binding in policy_target_list:
