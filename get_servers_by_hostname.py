@@ -135,10 +135,11 @@ def main():
                 print("\n" + "/" * 50 + "\\" * 50)
                 print("-" * 100)
                 print(colors.bold + colors.fg.darkgrey + colors.bg.green,
-                      "{:<10}{:>40}{:>10}{:>40}".format(
-                          "VSERVER :", cs_vserver_name, "VIP :", ip) + colors.reset)
+                      "{:<12}{:>38}{:>10}{:>40}".format(
+                          "CS VSERVER :", cs_vserver_name, "VIP :", ip) + colors.reset)
                 print("_" * 100)
                 print()
+                print("{:<50}{:>50}".format("Target Virtual Server:", target_vs))
                 rule_str_list = list(chunk_string(policy.rule, 50))
                 print("{:<50}".format("Policy Rule Content:"), end='')
                 print("{:>50}".format(rule_str_list[0]))
