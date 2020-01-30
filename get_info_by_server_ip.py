@@ -139,7 +139,9 @@ def main():
     for vs in bound_vs_list:
         policy_target_list = sb.get_bindings_by_vs(vs)
         if not policy_target_list:
+            print()
             print("{}: No bound CS VServer is available!".format(vs))
+            print()
             continue
         print(colors.bold + colors.fg.orange)
         print("_" * 130)
